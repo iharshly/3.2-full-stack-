@@ -1,0 +1,93 @@
+import React, { useState } from "react";
+import "./App.css";
+
+function App() {
+  // Initial list of books
+  const [books, setBooks] = useState([
+    { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald" },
+    { id: 2, title: "To Kill a Mockingbird", author: "Harper Lee" },
+    { id: 3, title: "1984", author: "George Orwell" },
+  ]);
+
+  // States for search and new book form
+  const [searchTerm, setSearchTerm] = useState("");
+  const [newTitle, setNewTitle] = useState("");
+  const [newAuthor, setNewAuthor] = useState("");
+
+  // Filtered book list based on search
+  const filteredBooks = books.filter(
+    (book) =>
+      book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      book.author.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Add a new book
+  const handleAddBook = (e) => {
+    e.preventDefault();
+    if (newTitle.trim() === "" || newAuthor.trim() === "") return;
+
+    const newBook = {
+      id: Date.now(),
+      title: newTitle,
+      author: newAuthor,
+    };
+    setBooks([...books, newBook]);
+    setNewTitle("");
+    setNewAuthor("");
+  };
+
+  // Remove a book by ID
+  const handleRemoveBook = (id) => {
+    setBooks(books.filter((book) => book.id !== id));
+  };
+
+  return (
+    <div className="library-container">
+      <h1>📚 Library Management</h1>
+
+      {/* Search Box */}
+      <input
+        type="text"
+        placeholder="Search by title or author..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="search-box"
+      />
+
+      {/* Add Book Form */}
+      <form onSubmit={handleAddBook} className="add-book-form">
+        <input
+          type="text"
+          placeholder="Book Title"
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Author"
+          value={newAuthor}
+          onChange={(e) => setNewAuthor(e.target.value)}
+        />
+        <button type="submit">Add Book</button>
+      </form>
+
+      {/* Book List */}
+      <ul className="book-list">
+        {filteredBooks.length > 0 ? (
+          filteredBooks.map((book) => (
+            <li key={book.id} className="book-item">
+              <div>
+                <strong>{book.title}</strong> by {book.author}
+              </div>
+              <button onClick={() => handleRemoveBook(book.id)}>Remove</button>
+            </li>
+          ))
+        ) : (
+          <p>No books found.</p>
+        )}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
